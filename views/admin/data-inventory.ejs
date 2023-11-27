@@ -7,7 +7,65 @@
     </div>
 
     <!-- Here is body code -->
-    
+    <% if (message.length != 0) { 
+        if (message[0].alert == 'success') { %>
+        <div class="alert alert-success" role="alert">
+          <%= message[0].message %>
+        </div>
+        <% } else { %>
+          <div class="alert alert-danger" role="alert">
+            <%= message[0].message %>
+          </div>
+        <% } 
+    } %>
+
+    <div class="mb-3">
+        <a href="add-inventory" class="btn btn-primary">Tambah Data Inventory</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <th style="min-width: 70px;">No.</th>
+                <th style="min-width: 300px;">Nama Product</th>
+                <th style="min-width: 150px;">Jumlah Masuk</th>
+                <th style="min-width: 150px;">Jumlah Keluar</th>
+                <th style="min-width: 200px;">Tanggal</th>
+                <th style="min-width: 150px;" class="text-center">Action</th>
+            </thead>
+            <tbody>
+                <% dataProducts.forEach((data, index) => { index++ %>
+                    <tr>
+                        <td><%= index++ %>.</td>
+                        <td><%= data.nama_product %></td>
+                        <td><%= data.jumlah_masuk %></td>
+                        <td><%= data.jumlah_keluar %></td>
+                        <td><%= data.created_at %></td>
+                        <td class="text-center">
+                            <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#deleteModal<%= data.id %>">Delete</a>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="deleteModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel"><b>Hapus Data Inventory</b></h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">Apakah anda yakin ingin menghapus data inventory product dengan nama <b><%= data.nama_product %></b> tanggal <b><%= data.created_at %></b>?</div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                    <a class="btn btn-outline-danger" href="delete-inventory/<%= data.id %>">Ya, Hapus</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
 
 </div>
 <!-- /.container-fluid -->

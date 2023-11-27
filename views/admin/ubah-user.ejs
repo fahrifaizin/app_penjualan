@@ -1,0 +1,51 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Ubah Data User</h1>
+    </div>
+
+    <!-- Here is body code -->
+    <% if (typeof errors != 'undefined') { %>
+        <div class="alert alert-danger" role="alert">
+            <% errors.forEach(error => { %>
+                <li>
+                    <%= error.msg %>
+                </li>
+            <% }) %>
+        </div>
+    <% } %>
+    <form action="/admin/edit-user" method="post">
+        <div class="form-group">
+            <label for="nama">Nama</label>
+            <input type="hidden" class="form-control" id="id" name="id" value="<%= dataUser.id %>" readonly>
+            <input type="text" class="form-control" id="nama" name="nama" value="<%= dataUser.nama %>">
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email" value="<%= dataUser.email %>">
+        </div>
+        <div class="form-group">
+            <label for="no_telp">No. Telepon</label>
+            <input type="text" class="form-control" id="no_telp" name="no_telp" value="<%= dataUser.no_telp %>">
+        </div>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select class="form-control" id="role_id" name="role_id">
+                <% if(dataUser.role_id == 2) { %>
+                    <option value="2" selected>Admin</option>
+                    <option value="3">Customer</option>
+                <% } else { %>
+                    <option value="2">Admin</option>
+                    <option value="3" selected>Customer</option>
+                <% } %>
+            </select>
+            </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+</div>
+<!-- /.container-fluid -->
+
+</div>
+<!-- End of Main Content -->
