@@ -166,13 +166,55 @@ app.get("/admin/reset-password/:role_id/:id", async (req, res) => {
 })
 
 // tampilan data barang
-app.get("/admin/products", (req, res) => {
+app.get("/admin/products", async (req, res) => {
     userData = { "nama" : "Moh Fahri Faizin", "role_id" : "1" }
+    const dataProducts = await getAllProducts()
     res.render("admin/data-products", {
         title: "App Penjualan - Data Barang",
         userData,
+        message: req.flash('message'),
+        layout: "admin/templates/core-layout",
+        dataProducts
+    });
+});
+
+// tampilan tambah data barang
+app.get("/admin/add-product", async (req, res) => {
+    userData = { "nama" : "Moh Fahri Faizin", "role_id" : "1" }
+    
+    res.render("admin/tambah-product", {
+        title: "App Penjualan - Tambah Data Barang",
+        userData,
         layout: "admin/templates/core-layout",
     });
+});
+
+// controller input data inventory
+app.post("/admin/add-inventory",[
+    check('nama_product', 'Nama Product Harus Dipilih').notEmpty(),
+    check('harga', 'Harga Harus Diisi').notEmpty(),
+    check('harga', 'Harga Harus Berupa Angka').isNumeric(),
+], async (req, res) => {
+    const errors = validationResult(req)
+    if (errors.errors.length > 0) {
+        const userData = { "nama" : "Moh Fahri Faizin", "role_id" : "1" }
+        res.render("admin/tambah-product", {
+            title: "App Penjualan - Tambah Data Product",
+            layout: "admin/templates/core-layout",
+            userData,
+            errors: errors.errors,
+        });
+    } else {
+        var data = [ req.body.nama_product, req.body.harga, '0', 'a.png' ]
+        const product = await searchProductByID(data[0])
+        var jumlah = parseInt(product.jumlah) + parseInt(data[1]) - parseInt(data[2])
+        // console.log(data)
+        addInventory(data)
+        updateJumlahProduct(jumlah, data[0])
+
+        req.flash('message', {'alert': 'success', 'message': 'Data Berhasil Ditambahkan'})
+        res.redirect("/admin/inventories");
+    }
 });
 
 // tampilan data inventory
