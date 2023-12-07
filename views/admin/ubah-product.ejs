@@ -3,7 +3,7 @@
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Tambah Data Product</h1>
+        <h1 class="h3 mb-0 text-gray-800">Ubah Data Product</h1>
     </div>
 
     <!-- Here is body code -->
@@ -16,14 +16,15 @@
             <% }) %>
         </div>
     <% } %>
-    <form action="/admin/add-product" method="post" enctype="multipart/form-data">
+    <form action="/admin/edit-product" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="nama_product">Nama Product</label>
-            <input type="text" class="form-control" id="nama_product" name="nama_product">
+            <input type="hidden" class="form-control" id="id" name="id" value="<%= dataProduct.id %>" readonly>
+            <input type="text" class="form-control" id="nama_product" name="nama_product" value="<%= dataProduct.nama_product %>">
         </div>
         <div class="form-group">
             <label for="harga">Harga</label>
-            <input type="text" class="form-control" id="harga" name="harga">
+            <input type="text" class="form-control" id="harga" name="harga" value="<%= dataProduct.harga %>">
         </div>
         <div class="form-group">
             <label for="photo">Photo</label>

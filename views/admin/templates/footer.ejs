@@ -32,8 +32,8 @@
                 </div>
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="/logout">Logout</a>
+                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-outline-danger" href="/logout">Logout</a>
                 </div>
             </div>
         </div>
@@ -46,9 +46,13 @@
 
     <!-- Core plugin JavaScript-->
     <script src="../../../vendor/jquery-easing/jquery.easing.js"></script>
+    <script src="../../../vendor/datatables/datatables.min.js"></script>
 
     <!-- Custom scripts for all pages-->
     <script src="../../../js/sb-admin-2.min.js"></script>
+    <script>
+        $('.dataTables').DataTable();
+    </script>
 
 </body>
 

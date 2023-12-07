@@ -7,96 +7,77 @@
     </div>
 
     <!-- Here is body code -->
-    <% if (message.length != 0) { 
-        if (message[0].alert == 'success') { %>
-        <div class="alert alert-success" role="alert">
-          <%= message[0].message %>
-        </div>
+    <% if (message.length !=0) { if (message[0].alert=='success' ) { %>
+            <div class="alert alert-success" role="alert">
+                <%= message[0].message %>
+            </div>
+        <% } else if (message[0].alert=='warning' ) { %>
+            <div class="alert alert-warning" role="alert">
+                <%= message[0].message %>
+            </div>
         <% } else { %>
-          <div class="alert alert-danger" role="alert">
-            <%= message[0].message %>
-          </div>
-        <% } 
-    } %>
+            <div class="alert alert-warning" role="alert">
+                <%= message[0].message %>
+            </div>
+    <% } } %>
 
     <div class="mb-3">
         <a href="add-product" class="btn btn-primary">Tambah Data Product</a>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <th style="min-width: 70px;">No.</th>
-                <th style="min-width: 500px;">Nama Product</th>
-                <th style="min-width: 200px;">Jumlah</th>
-                <th style="min-width: 200px;" class="text-center">Action</th>
-            </thead>
-            <tbody>
-                <% dataProducts.forEach((data, index) => { index++ %>
-                    <tr>
-                        <td><%= index++ %>.</td>
-                        <td><%= data.nama_product %></td>
-                        <td><%= data.jumlah %></td>
-                        <td>
-                            <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#detailModal<%= data.id %>">Detail</a>
-                            <a href="edit-product/<%= data.id %>" class="btn btn-warning btn-sm">Ubah</a>
-                            <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#deleteModal<%= data.id %>">Delete</a>
-                        </td>
-                    </tr>
-                    <div class="modal fade" id="deleteModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel"><b>Hapus Data <%= data.nama_product %></b></h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
+    <table class="table table-responsive table-hover dataTables">
+        <thead>
+            <th style="min-width: 70px;">No.</th>
+            <th style="min-width: 500px;">Nama Product</th>
+            <th style="min-width: 200px;">Jumlah</th>
+            <th style="min-width: 170px;" class="text-center">Action</th>
+        </thead>
+        <tbody>
+            <% dataProducts.forEach((data, index) => { index++ %>
+                <tr>
+                    <td><%= index++ %>.</td>
+                    <td><%= data.nama_product %></td>
+                    <td><%= data.jumlah %></td>
+                    <td class="text-center">
+                        <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#detailModal<%= data.id %>">Detail</a>
+                        <a href="edit-product/<%= data.id %>" class="btn btn-warning btn-sm">Ubah</a>
+                    </td>
+                </tr>
+                <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"><b>Detail Data <%= data.nama_product %></b></h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Nama Product</div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.nama_product %></div>
                                 </div>
-                                <div class="modal-body">Apakah anda yakin ingin menghapus data dengan nama <b><%= data.nama_product %></b>?</div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                    <a class="btn btn-outline-danger" href="delete-product/<%= data.id %>">Ya, Hapus</a>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Harga</div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.harga %></div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Jumlah</div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.jumlah %></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Foto</div>
+                                    <div class="col-sm-9 col-8 mb-2"><img class="img-profile rounded w-50" src="../../../img/products/<%= data.photo %>"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel"><b>Detail Data <%= data.nama_product %></b></h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Nama Product</div>
-                                        <div class="col-9 mb-2"><%= data.nama_product %></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Harga</div>
-                                        <div class="col-9 mb-2"><%= data.harga %></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Jumlah</div>
-                                        <div class="col-9 mb-2"><%= data.jumlah %></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Foto</div>
-                                        <div class="col-9 mb-2"><img class="img-profile rounded w-50" src="../../../img/products/<%= data.photo %>"></div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
+                </div>
+            <% }) %>
+        </tbody>
+    </table>
 
 </div>
 <!-- /.container-fluid -->

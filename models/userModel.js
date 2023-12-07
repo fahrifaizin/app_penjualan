@@ -20,14 +20,30 @@ const searchUserByID = async (data) => {
     return user.rows[0];
 };
 
+const searchUserByEmail = async (data) => {
+    const user = await connection.query('select * from tb_users where email = $1', [data]);
+    return user.rows[0];
+};
+
 const updateUser = async (data) => {
     const user = await connection.query('update tb_users set nama = $1, email = $2, no_telp = $3, role_id = $4 where id = $5', [data.nama, data.email, data.no_telp, data.role_id, data.id]);
     return user;
 };
+
+const updateProfile = async (data, password) => {
+    var user;
+    if (password == true) {
+        user = await connection.query('update tb_users set nama = $1, email = $2, password = $3, no_telp = $4 where id = $5', [data[0], data[1], data[2], data[3], data[4]]);
+    } else {
+        user = await connection.query('update tb_users set nama = $1, email = $2, no_telp = $3 where id = $4', [data[0], data[1], data[2], data[3]]);
+    }
+    return user;
+};
+
 const resetPassword = async (password, id) => {
     const user = await connection.query('update tb_users set password = $1 where id = $2', [password, id]);
     return user;
 };
   
 
-module.exports = { getAllUsers, addUser, deleteUser, searchUserByID, updateUser, resetPassword };
+module.exports = { getAllUsers, addUser, deleteUser, searchUserByID, updateUser, resetPassword, searchUserByEmail, updateProfile };

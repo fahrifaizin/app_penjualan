@@ -7,8 +7,54 @@
     </div>
 
     <!-- Here is body code -->
-    
+    <% if (typeof errors != 'undefined') { %>
+        <div class="alert alert-danger" role="alert">
+            <% errors.forEach(error => { %>
+                <li>
+                    <%= error.msg %>
+                </li>
+            <% }) %>
+        </div>
+    <% } %>
 
+    <% if (message.length !=0) { if (message[0].alert=='success' ) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else if (message[0].alert=='warning' ) { %>
+        <div class="alert alert-warning" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } } %>
+    
+    <form action="/admin/my-profile" method="post">
+        <div class="form-group">
+            <label for="nama">Nama</label>
+            <input type="hidden" class="form-control" id="id" name="id" value="<%= userData.id %>" readonly>
+            <input type="text" class="form-control" id="nama" name="nama" value="<%= userData.nama %>">
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" id="email" name="email" value="<%= userData.email %>">
+        </div>
+        <div class="form-group">
+            <label for="no_telp">No. Telepon</label>
+            <input type="text" class="form-control" id="no_telp" name="no_telp" value="<%= userData.no_telp %>">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="passwordConfirm">Confirm Password</label>
+            <input type="password" class="form-control" id="passwordConfirm" name="passwordConfirm">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
 </div>
 <!-- /.container-fluid -->
 

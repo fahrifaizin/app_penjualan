@@ -7,7 +7,89 @@
     </div>
 
     <!-- Here is body code -->
-    
+    <% if (message.length !=0) { if (message[0].alert=='success' ) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else if (message[0].alert=='warning' ) { %>
+        <div class="alert alert-warning" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning" role="alert">
+        <%= message[0].message %>
+    </div>
+    <% } } %>
+    <div class="row">
+        <a class="col-xl-3 col-md-6 mb-3" href="/admin/users">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Data Users
+                            </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data[0] %></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a class="col-xl-3 col-md-6 mb-3" href="/admin/products">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Data Products
+                            </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data[1] %></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cart-flatbed fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a class="col-xl-3 col-md-6 mb-3" href="/admin/inventories">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Data Inventories
+                            </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data[2] %></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-warehouse fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a class="col-xl-3 col-md-6 mb-3" href="/admin/transactions">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Data Transaksi
+                            </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data[3] %></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 
 </div>
 <!-- /.container-fluid -->

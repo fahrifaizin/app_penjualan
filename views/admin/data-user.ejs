@@ -7,136 +7,136 @@
     </div>
 
     <!-- Here is body code -->
-    <% if (message.length != 0) { 
-        if (message[0].alert == 'success') { %>
-        <div class="alert alert-success" role="alert">
-          <%= message[0].message %>
-        </div>
+    <% if (message.length !=0) { if (message[0].alert=='success' ) { %>
+            <div class="alert alert-success" role="alert">
+                <%= message[0].message %>
+            </div>
+        <% } else if (message[0].alert=='warning' ) { %>
+            <div class="alert alert-warning" role="alert">
+                <%= message[0].message %>
+            </div>
         <% } else { %>
-          <div class="alert alert-danger" role="alert">
-            <%= message[0].message %>
-          </div>
-        <% } 
-    } %>
+            <div class="alert alert-warning" role="alert">
+                <%= message[0].message %>
+            </div>
+    <% } } %>
 
     <div class="mb-3">
         <a href="add-user" class="btn btn-primary">Tambah Data User</a>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <th style="min-width: 70px;">No.</th>
-                <th style="min-width: 300px;">Nama</th>
-                <th style="min-width: 400px;">Email</th>
-                <th style="min-width: 350px;" class="text-center">Action</th>
-            </thead>
-            <tbody>
-                <% dataUsers.forEach((data, index) => { index++ %>
-                    <tr>
-                        <td><%= index++ %>.</td>
-                        <td><%= data.nama %></td>
-                        <td><%= data.email %></td>
-                        <td>
-                            <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#detailModal<%= data.id %>">Detail</a>
-                            <a href="edit-user/<%= data.id %>" class="btn btn-warning btn-sm">Ubah</a>
-                            <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#deleteModal<%= data.id %>">Delete</a>
-                            <a class="btn btn-secondary btn-sm" href="#" data-toggle="modal" data-target="#resetPasswordModal<%= data.id %>">Reset Password</a>
-                        </td>
-                    </tr>
-                    <div class="modal fade" id="deleteModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel"><b>Hapus Data <%= data.nama %></b></h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">Apakah anda yakin ingin menghapus data dengan nama <b><%= data.nama %></b>?</div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                    <a class="btn btn-outline-danger" href="delete-user/<%= data.id %>">Ya, Hapus</a>
-                                </div>
+    <table class="table table-responsive table-hover dataTables">
+        <thead>
+            <th style="min-width: 70px;">No.</th>
+            <th style="min-width: 300px;">Nama</th>
+            <th style="min-width: 400px;">Email</th>
+            <th style="min-width: 300px;" class="text-center">Action</th>
+        </thead>
+        <tbody>
+            <% dataUsers.forEach((data, index) => { index++ %>
+                <tr>
+                    <td><%= index++ %>.</td>
+                    <td><%= data.nama %></td>
+                    <td><%= data.email %></td>
+                    <td>
+                        <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#detailModal<%= data.id %>">Detail</a>
+                        <a href="edit-user/<%= data.id %>" class="btn btn-warning btn-sm">Ubah</a>
+                        <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#deleteModal<%= data.id %>">Delete</a>
+                        <a class="btn btn-secondary btn-sm" href="#" data-toggle="modal" data-target="#resetPasswordModal<%= data.id %>">Reset Password</a>
+                    </td>
+                </tr>
+                <div class="modal fade" id="deleteModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"><b>Hapus Data <%= data.nama %></b></h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">Apakah anda yakin ingin menghapus data dengan nama <b><%= data.nama %></b>?</div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                <a class="btn btn-outline-danger" href="delete-user/<%= data.id %>">Ya, Hapus</a>
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="resetPasswordModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel"><b>Reset Password <%= data.nama %></b></h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">Apakah anda yakin ingin mereset password dengan nama <b><%= data.nama %></b>?</div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                    <a class="btn btn-outline-warning" href="reset-password/<%= data.role_id %>/<%= data.id %>">Ya, Reset</a>
-                                </div>
+                </div>
+                <div class="modal fade" id="resetPasswordModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"><b>Reset Password <%= data.nama %></b></h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">Apakah anda yakin ingin mereset password dengan nama <b><%= data.nama %></b>?</div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Cancel</button>
+                                <a class="btn btn-outline-warning" href="reset-password/<%= data.role_id %>/<%= data.id %>">Ya, Reset</a>
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel"><b>Detail Data <%= data.nama %></b></h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
+                </div>
+                <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"><b>Detail Data <%= data.nama %></b></h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Nama</div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.nama %></div>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Nama</div>
-                                        <div class="col-9 mb-2"><%= data.nama %></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Email</div>
-                                        <div class="col-9 mb-2"><%= data.email %></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">No. Telepon</div>
-                                        <div class="col-9 mb-2"><%= data.no_telp %></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Foto</div>
-                                        <div class="col-9 mb-2"><img class="img-profile rounded w-25" src="../../../vendor/fontawesome/svgs/solid/user.svg"></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-3 mb-2">Role</div>
-                                        <div class="col-9 mb-2">
-                                            <%  switch(data.role_id){
-                                                    case 1: %>
-                                                        Super Admin
-                                                        <% break;
-                                                    case 2: %>
-                                                        Admin
-                                                        <% break;
-                                                    case 3: %>
-                                                        Customer
-                                                        <% break;
-                                                    default: %>
-                                                        Role Not found
-                                                        <% break;
-                                                }
-                                            %>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Email</div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.email %></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">No. Telepon</div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.no_telp %></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Role</div>
+                                    <div class="col-sm-9 col-8-9 mb-2">
+                                        <%  switch(data.role_id){
+                                                case 1: %>
+                                                    Super Admin
+                                                    <% break;
+                                                case 2: %>
+                                                    Admin
+                                                    <% break;
+                                                case 3: %>
+                                                    Customer
+                                                    <% break;
+                                                default: %>
+                                                    Role Not found
+                                                    <% break;
+                                            }
+                                        %>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
+                                <div class="row">
+                                    <div class="col-sm-3 col-4 mb-2">Foto</div>
+                                    <div class="col-sm-9 col-8 mb-2"><img class="img-profile rounded w-25" src="../../../vendor/fontawesome/svgs/solid/user.svg"></div>
                                 </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
+                </div>
+            <% }) %>
+        </tbody>
+    </table>
 
 </div>
 <!-- /.container-fluid -->
