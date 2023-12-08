@@ -1,0 +1,106 @@
+<div class="container mt-3 mb-3">
+    <!-- Here is body code -->
+    <% if (message.length !=0) { if (message[0].alert=='success' ) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else if (message[0].alert=='warning' ) { %>
+        <div class="alert alert-warning" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else { %>
+        <div class="alert alert-danger" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } } %>
+    <% if (typeof errors !='undefined' ) { %>
+        <div class="alert alert-danger" role="alert">
+            <% errors.forEach(error=> { %>
+                <li>
+                    <%= error.msg %>
+                </li>
+            <% }) %>
+        </div>
+    <% } %>
+    
+    <!-- here body to code -->
+    <div class="mb-4">
+        <h1>Daftar Transaksi</h1>
+    </div>
+    <table class="table table-responsive table-hover dataTables">
+        <thead>
+            <th style="min-width: 70px;">No.</th>
+            <th style="min-width: 400px;">Invoice</th>
+            <th style="min-width: 300px;">Tanggal Pembelian</th>
+            <th style="min-width: 170px;" class="text-center">Action</th>
+        </thead>
+        <tbody>
+            <% dataTransaksi.forEach((data, index)=> { index++ %>
+                <tr>
+                    <td>
+                        <%= index++ %>.
+                    </td>
+                    <td>
+                        <%= data.invoice %>
+                    </td>
+                    <td>
+                        <%= data.created_at %>
+                    </td>
+                    <td class="text-center">
+                        <a class="btn btn-info btn-sm" href="#" data-toggle="modal"
+                            data-target="#detailModal<%= data.id %>">Detail</a>
+                    </td>
+                </tr>
+                <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel"><b>Detail Transaksi <%= data.invoice %></b>
+                                </h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-1 mb-2"><b>No.</b></div>
+                                    <div class="col-4 mb-2"><b>Nama Product</b></div>
+                                    <div class="col-3 mb-2"><b>Harga</b></div>
+                                    <div class="col-2 mb-2"><b>Total</b></div>
+                                    <div class="col-2 mb-2"><b>Total Harga</b></div>
+                                </div>
+                                <% let total_pembelian=0; data.details.forEach((data, index)=> { var harga = data.harga_product, total = data.total_product * data.harga_product
+                                    index++ %>
+                                    <div class="row">
+                                        <div class="col-1 mb-2">
+                                            <%= index %>.
+                                        </div>
+                                        <div class="col-4 mb-2">
+                                            <%= data.nama_product %>
+                                        </div>
+                                        <div class="col-3 mb-2"><%= (harga).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %>
+                                        </div>
+                                        <div class="col-2 mb-2">
+                                            <%= data.total_product %> pcs
+                                        </div>
+                                        <div class="col-2 mb-2"><%= (total).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %>
+                                        </div>
+                                    </div>
+                                    <% total_pembelian +=total }) %>
+                                        <hr />
+                                        <div class="row">
+                                            <div class="col-10 mb-2 text-right"><b>Total Pembelian</b></div>
+                                            <div class="col-2 mb-2"><b><%= (total_pembelian).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %></b></div>
+                                        </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

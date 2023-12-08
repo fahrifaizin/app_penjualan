@@ -30,4 +30,9 @@ const updateJumlahProduct = async (jumlah, id) => {
     return product;
 };
 
-module.exports = { getAllProducts, addProduct, searchProductByID, updateProduct, updateJumlahProduct };
+const getMostStock = async () => {
+    const product = await connection.query('select nama_product, jumlah from tb_products order by jumlah desc limit 3')
+    return product.rows
+}
+
+module.exports = { getAllProducts, addProduct, searchProductByID, updateProduct, updateJumlahProduct, getMostStock };

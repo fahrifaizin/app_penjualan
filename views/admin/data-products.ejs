@@ -36,14 +36,14 @@
                 <tr>
                     <td><%= index++ %>.</td>
                     <td><%= data.nama_product %></td>
-                    <td><%= data.jumlah %></td>
+                    <td><%= data.jumlah %> pcs</td>
                     <td class="text-center">
                         <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#detailModal<%= data.id %>">Detail</a>
                         <a href="edit-product/<%= data.id %>" class="btn btn-warning btn-sm">Ubah</a>
                     </td>
                 </tr>
                 <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel"><b>Detail Data <%= data.nama_product %></b></h5>
@@ -58,15 +58,15 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3 col-4 mb-2">Harga</div>
-                                    <div class="col-sm-9 col-8 mb-2"><%= data.harga %></div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= (data.harga).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3 col-4 mb-2">Jumlah</div>
-                                    <div class="col-sm-9 col-8 mb-2"><%= data.jumlah %></div>
+                                    <div class="col-sm-9 col-8 mb-2"><%= data.jumlah %> pcs</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-3 col-4 mb-2">Foto</div>
-                                    <div class="col-sm-9 col-8 mb-2"><img class="img-profile rounded w-50" src="../../../img/products/<%= data.photo %>"></div>
+                                    <div class="col-sm-9 col-8 mb-2"><img style="height: 250px; width: 250px;" class="img-profile rounded" src="../../../img/products/<%= data.photo %>"></div>
                                 </div>
                             </div>
                             <div class="modal-footer">

@@ -23,31 +23,38 @@
     <link href="../../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../../vendor/datatables/datatables.min.css" rel="stylesheet">
     <link href="../../../css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../../css/style.css" rel="stylesheet">
 
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-    
-            <a class="navbar-brand" href="#">
-                <img src="../../../vendor/fontawesome/svgs/solid/code.svg" width="30" height="30" alt="logo">
-                App Penjualan
+            <a class="navbar-brand" href="/">
+                <img src="../../../vendor/fontawesome/svgs/solid/skull-crossbones.svg" width="30" height="30" alt="logo">
+                <b>Tokopedei</b>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/pembelian">Pembelian</a>
+                        <a class="nav-link" href="/cart">Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
+                        <a class="nav-link" href="/transaksi">Transaksi</a>
+                    </li>
+                    <li class="nav-item">
+                        <% if(logged == "true"){ %>
+                            <a class="nav-link" href="/logout">Logout</a>
+                        <% } else { %>
+                                <a class="nav-link" href="/login">Login</a>
+                        <% } %>
                     </li>
                 </ul>
             </div>

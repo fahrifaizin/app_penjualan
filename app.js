@@ -9,9 +9,10 @@ const flash = require('connect-flash');
 const uploader = require("multer");
 const { validationResult, check } = require("express-validator");
 const { getAllUsers, addUser, deleteUser, searchUserByID, updateUser, resetPassword, searchUserByEmail, updateProfile } = require("./models/userModel.js");
-const { getAllProducts, addProduct, searchProductByID, updateProduct, updateJumlahProduct } = require("./models/productModel.js");
+const { getAllProducts, addProduct, searchProductByID, updateProduct, updateJumlahProduct, getMostStock } = require("./models/productModel.js");
 const { getAllInventories, addInventory, deleteInventory, searchInventoryByID } = require("./models/inventoryModel.js");
-const { getAllTransaction, getDetailTransaction, addTransaction, addTransactionDetail } = require("./models/transactionModel.js");
+const { getAllTransaction, getDetailTransaction, addTransaction, addTransactionDetail, getAllTransactionByUserId, getTransactionByInv, getMostPopularProduct } = require("./models/transactionModel.js");
+const { addCart, searchCartByIdUser, searchCart, updateCart, deleteCart } = require("./models/cartModel.js");
 
 
 const app = express();
@@ -29,7 +30,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('secret'));
     app.use(session ({
         cookie: {
-            maxAge: (5 * 60000)
+            maxAge: null
         },
         secret: 'secret',
         resave: false,
@@ -65,20 +66,157 @@ async function passwordVerification (password, passwordHash) {
 
 // tampilan halaman home
 app.get("/", async (req, res) => {
-    userData = { "nama" : "Moh Fahri Faizin", "role_id" : "1" }
-    console.log(req.flash('message'))
+    const dataBarang = await getAllProducts()
+    var log = req.session.authenticated ? "true" : "false"
     res.render("home/index", {
         title: "App Penjualan - Home",
-        userData,
         message: req.flash('message'),
+        logged: log,
+        dataBarang,
         layout: "home/templates/core-layout",
     });
+});
+
+// controller add to cart
+app.get("/add-cart/:id_product", async (req, res) => {
+    if (req.session.authenticated){
+        var cartCheck = await searchCart(req.session.dataUser.id, req.params.id_product)
+        if (cartCheck) {
+            var data = [req.session.dataUser.id, req.params.id_product, (cartCheck.jumlah + 1)]
+            await updateCart(data)
+            req.flash('message', {'alert': 'success', 'message': 'Barang Sudah Terupdate Di Keranjang!'})
+        } else {
+            var data = [req.session.dataUser.id, req.params.id_product, '1']
+            await addCart(data)
+            req.flash('message', {'alert': 'success', 'message': 'Barang Sudah Dimasukan Ke Keranjang!'})
+        }
+        res.redirect('/')
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
+        res.redirect('/')
+    }
+});
+
+// tampilan halaman transaksi
+app.get("/transaksi", async (req, res) => {
+    if(req.session.authenticated){
+        const dataTransaksi = await getAllTransactionByUserId(req.session.dataUser.id)
+        for (let index in dataTransaksi) {
+            dataTransaksi[index].details = await getDetailTransaction(dataTransaksi[index].id);
+        }
+        res.render("home/transaksi", {
+            title: "App Penjualan - Daftar Transaksi",
+            dataTransaksi,
+            logged: "true",
+            message: req.flash('message'),
+            layout: "home/templates/core-layout",
+        });
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
+        res.redirect('/')
+    }
+});
+
+// tampilan halaman pembelian
+app.get("/cart", async (req, res) => {
+    if(req.session.authenticated){
+        var dataCart = await searchCartByIdUser(req.session.dataUser.id)
+        res.render("home/cart", {
+            title: "App Penjualan - Pembelian",
+            logged: "true",
+            dataCart,
+            message: req.flash('message'),
+            layout: "home/templates/core-layout",
+        });
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
+        res.redirect('/')
+    }
+});
+
+// controller sum product cart
+app.get("/sum-cart/:id_product", async (req, res) => {
+    if (req.session.authenticated){
+        var dataProduct = await searchProductByID(req.params.id_product)
+        var cartCheck = await searchCart(req.session.dataUser.id, req.params.id_product)
+        var jumlahUpdate = (cartCheck.jumlah + 1)
+        if (jumlahUpdate <= dataProduct.jumlah) {
+            var data = [req.session.dataUser.id, req.params.id_product, jumlahUpdate]
+            await updateCart(data)
+            req.flash('message', {'alert': 'success', 'message': 'Jumlah Barang Berhasil Ditambahkan!'})
+        } else {
+            req.flash('message', {'alert': 'failed', 'message': 'Jumlah Barang Melebihi Maksimal!'})
+        }
+        res.redirect('/cart')
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
+        res.redirect('/cart')
+    }
+});
+
+// controller sub product cart
+app.get("/sub-cart/:id_product", async (req, res) => {
+    if (req.session.authenticated){
+        var cartCheck = await searchCart(req.session.dataUser.id, req.params.id_product)
+        var jumlahUpdate = (cartCheck.jumlah - 1)
+        if (jumlahUpdate > 0) {
+            var data = [req.session.dataUser.id, req.params.id_product, jumlahUpdate]
+            await updateCart(data)
+            req.flash('message', {'alert': 'success', 'message': 'Jumlah Barang Berhasil Dikurangi!'})
+        } else {
+            var data = [req.session.dataUser.id, req.params.id_product]
+            await deleteCart(data)
+            req.flash('message', {'alert': 'warning', 'message': 'Data Barang Terhapus!'})
+        }
+        res.redirect('/cart')
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
+        res.redirect('/')
+    }
+});
+
+// controller beli-sekarang
+app.post("/beli-sekarang", async (req, res) => {
+    if(req.session.authenticated){
+        var rearInv;
+        if (req.session.dataUser.id.toString().length == 1) {
+            rearInv = req.session.dataUser.id + Date.now().toString().substring(4)
+        } else if (req.session.dataUser.id.toString().length == 2) {
+            rearInv = req.session.dataUser.id + Date.now().toString().substring(5)
+        } else if (req.session.dataUser.id.toString().length == 3) {
+            rearInv = req.session.dataUser.id + Date.now().toString().substring(6)
+        } else {
+            rearInv = req.session.dataUser.id + Date.now().toString().substring(7)
+        }
+        const invoice = 'INV/' + new Date().getFullYear() + new Date().getMonth() + new Date().getDate() + '/MPL/' + rearInv
+        var dataTransaksi = [invoice, req.session.dataUser.id, now]
+        await addTransaction(dataTransaksi)
+        var checkTransaksi = await getTransactionByInv(invoice)
+        const id_product = [req.body.id_product].flat(Infinity)
+        const nama_product = [req.body.nama_product].flat(Infinity)
+        const harga = [req.body.harga].flat(Infinity)
+        const jumlah = [req.body.jumlah].flat(Infinity)
+        var dataDetailTransaksi = []
+        for (let index = 0; index < id_product.length; index++) {
+            dataDetailTransaksi[index] = [checkTransaksi.id, nama_product[index], jumlah[index], harga[index]]
+            await addTransactionDetail(dataDetailTransaksi[index])
+            const checkProduct = await searchProductByID(id_product[index])
+            const sisaProduct = (checkProduct.jumlah - jumlah[index])
+            await updateJumlahProduct(sisaProduct, id_product[index])
+            await deleteCart([req.session.dataUser.id, id_product[index]])
+        }
+        req.flash('message', {'alert': 'success', 'message': 'Pembelian Berhasil! Silahkan Lihat di Menu Transaksi'})
+        res.redirect('/cart')
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
+        res.redirect('/')
+    }
 });
 
 // tampilan halaman login
 app.get("/login", async (req, res) => {
     if(req.session.authenticated){
-            req.flash('message', {'alert': 'warning', 'message': 'Anda Sudah Login!'})
+        req.flash('message', {'alert': 'warning', 'message': 'Anda Sudah Login!'})
         if (req.session.dataUser.role_id == 1 || req.session.dataUser.role_id == 2) {
             res.redirect("/admin");
         } else if (req.session.dataUser.role_id == 3) {
@@ -95,13 +233,18 @@ app.get("/login", async (req, res) => {
 
 // controller logout
 app.get("/logout", async (req, res) => {
-    req.session.destroy((err) =>{
-        if (err) {
-            console.log(err)
-        } else {
-            res.redirect('/login')
-        }
-    })
+    if(req.session.authenticated){
+        req.session.destroy((err) =>{
+            if (err) {
+                console.log(err)
+            } else {
+                res.redirect('/')
+            }
+        })
+    } else {
+        req.flash('message', {'alert': 'failed', 'message': 'Anda Belum Login!'})
+        res.redirect('/login')
+    }
 });
 
 // controller verify login
@@ -111,11 +254,9 @@ app.post("/verify-login",[
     check("password", "Password Harus Diisi").notEmpty().trim()], async (req, res) => {
     const errors = validationResult(req)
     if (errors.errors.length > 0) {
-        const userData = { "nama" : "Moh Fahri Faizin", "role_id" : "1" }
         res.render("home/login", {
             title: "App Penjualan - Login",
             layout: "home/login",
-            userData,
             errors: errors.errors,
         });
     } else {
@@ -145,11 +286,15 @@ app.get("/admin", async (req, res) => {
     if(req.session.authenticated){
         if (req.session.dataUser.role_id == 1 || req.session.dataUser.role_id == 2) {
             var userData = await searchUserByID(req.session.dataUser.id)
+            var mostStock = await getMostStock()
+            var mostPopularProduct = await getMostPopularProduct()
             var data = [(await getAllUsers()).length, (await getAllProducts()).length, (await getAllInventories()).length, (await getAllTransaction()).length]
             res.render("admin/dashboard", {
                 title: "App Penjualan - Dashboard",
                 userData,
                 data,
+                mostStock,
+                mostPopularProduct,
                 message: req.flash('message'),
                 layout: "admin/templates/core-layout",
             });
@@ -159,7 +304,7 @@ app.get("/admin", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -182,7 +327,7 @@ app.get("/admin/users", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -207,7 +352,7 @@ app.get("/admin/add-user", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -248,7 +393,7 @@ app.post("/admin/add-user",[
             }
         } else {
             req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-            res.redirect('/login')
+            res.redirect('/')
         }
 });
 
@@ -273,7 +418,7 @@ app.get("/admin/delete-user/:id", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 })
 
@@ -301,7 +446,7 @@ app.get('/admin/edit-user/:id', async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 })
 
@@ -341,7 +486,7 @@ app.post("/admin/edit-user",[
             }
         } else {
             req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-            res.redirect('/login')
+            res.redirect('/')
         }
 });
 
@@ -367,7 +512,7 @@ app.get("/admin/reset-password/:role_id/:id", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 })
 
@@ -390,7 +535,7 @@ app.get("/admin/products", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -415,7 +560,7 @@ app.get("/admin/add-product", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -442,7 +587,7 @@ app.get("/admin/edit-product/:id", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -498,7 +643,7 @@ app.post("/admin/add-product", upload.single('photo'), [
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -569,7 +714,7 @@ app.post("/admin/edit-product", upload.single('photo'), [
             }
         } else {
             req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-            res.redirect('/login')
+            res.redirect('/')
         }
 });
 
@@ -592,7 +737,7 @@ app.get("/admin/inventories", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -625,7 +770,7 @@ app.get("/admin/add-inventory", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -671,7 +816,7 @@ app.post("/admin/add-inventory",[
             }
         } else {
             req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-            res.redirect('/login')
+            res.redirect('/')
         }
 });
 
@@ -700,7 +845,7 @@ app.get("/admin/delete-inventory/:id", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 })
 
@@ -726,7 +871,7 @@ app.get("/admin/transactions", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -747,7 +892,7 @@ app.get("/admin/my-profile", async (req, res) => {
         }
     } else {
         req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.redirect('/')
     }
 });
 
@@ -798,11 +943,12 @@ app.post("/admin/my-profile",[
             }
         } else {
             req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-            res.redirect('/login')
+            res.redirect('/')
         }
 });
 
 app.use('/', async (req, res) => {
+    var log = req.session.authenticated ? "true" : "false"
     if(req.session.authenticated){
         var userData = await searchUserByID(req.session.dataUser.id)
         if (req.session.dataUser.role_id == 1 || req.session.dataUser.role_id == 2) {
@@ -815,12 +961,17 @@ app.use('/', async (req, res) => {
             res.render("home/not-found", {
                 title: "App Penjualan - Page Not Found",
                 userData,
+                logged: log,
                 layout: "home/templates/core-layout",
             });
         }
     } else {
-        req.flash('message', {'alert': 'failed', 'message': 'Anda Harus Login Terlebih Dahulu!'})
-        res.redirect('/login')
+        res.render("home/not-found", {
+            title: "App Penjualan - Page Not Found",
+            userData,
+            logged: log,
+            layout: "home/templates/core-layout",
+        });
     }
 });
 

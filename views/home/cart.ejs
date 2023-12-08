@@ -1,0 +1,81 @@
+<div class="container mt-3 mb-3">
+    <% if (message.length !=0) { if (message[0].alert=='success' ) { %>
+        <div class="alert alert-success" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else if (message[0].alert=='warning' ) { %>
+        <div class="alert alert-warning" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } else { %>
+        <div class="alert alert-danger" role="alert">
+            <%= message[0].message %>
+        </div>
+    <% } } %>
+    <% if (typeof errors !='undefined' ) { %>
+        <div class="alert alert-danger" role="alert">
+            <% errors.forEach(error=> { %>
+                <li>
+                    <%= error.msg %>
+                </li>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <!-- Here is body code -->
+    <div class="mb-4">
+        <h1>Cart</h1>
+    </div>
+    <% if(dataCart.length == 0){ %>
+        <div class="alert alert-warning" role="alert">
+            Belum Ada Barang Di Keranjang
+        </div>
+    <% } else { %>
+        <form action="/beli-sekarang" method="post">
+            <% dataCart.forEach(data => { %>
+                <div class="form-row mb-3">
+                    <div class="col-2 col-sm-2">
+                        <img src="../img/products/<%= data.photo %>" class="w-100" alt="Foto Product <%= data.nama_product %>">
+                    </div>
+                    <div class="col col-sm">
+                        <input type="hidden" class="form-control" name="id_product" placeholder="ID Barang" value="<%= data.id_products %>" readonly>
+                        <input type="text" class="form-control" name="nama_product" placeholder="Nama Barang" value="<%= data.nama_product %>" readonly>
+                    </div>
+                    <div class="col-2 col-sm-1">
+                        <input type="text" class="form-control" name="harga" placeholder="Harga Barang" value="<%= data.harga %>" readonly>
+                    </div>
+                    <div class="col-2 col-sm-1">
+                        <input type="number" max="<%= data.jumlah_barang %>" class="form-control" name="jumlah" placeholder="Jumlah Barang" value="<%= data.jumlah_beli %>">
+                    </div>
+                    <div class="col-1 col-sm-1 text-center">
+                        <a href="/sub-cart/<%= data.id_products %>" class="btn btn-danger btn-sm"><i class="fas fa-minus"></i></a>
+                        <a href="/sum-cart/<%= data.id_products %>" class="btn btn-success btn-sm"><i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+            <% }) %>
+            <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#confirmModal">Beli Sekarang</button>
+            <div class="modal fade" id="confirmModal" data-backdrop="static" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><b>Konfirmasi Pembelian</b></h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Apakah data barang yang akan dibeli sudah sesuai?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-outline-success" type="submit">Ya, Beli Sekarang</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    <% } %>
+</div>
+
+

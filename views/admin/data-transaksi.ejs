@@ -39,7 +39,7 @@
                     </td>
                 </tr>
                 <div class="modal fade" id="detailModal<%= data.id %>" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel"><b>Detail Transaksi <%= data.invoice %></b></h5>
@@ -55,19 +55,20 @@
                                     <div class="col-2 mb-2"><b>Total</b></div>
                                     <div class="col-2 mb-2"><b>Total Harga</b></div>
                                 </div>
-                                <% let total_pembelian = 0; data.details.forEach((data, index) => { index++ %>
+                                <% let total_pembelian = 0; data.details.forEach((data, index) => { var harga = data.harga_product, total = data.total_product * data.harga_product
+                                    index++ %>
                                     <div class="row">
                                         <div class="col-1 mb-2"><%= index %>.</div>
                                         <div class="col-4 mb-2"><%= data.nama_product %></div>
-                                        <div class="col-3 mb-2">Rp. <%= data.harga %></div>
-                                        <div class="col-2 mb-2"><%= data.total %> pcs</div>
-                                        <div class="col-2 mb-2">Rp. <%= total = data.total * data.harga %></div>
+                                        <div class="col-3 mb-2"><%= (harga).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %></div>
+                                        <div class="col-2 mb-2"><%= data.total_product %> pcs</div>
+                                        <div class="col-2 mb-2"><%= (total).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %></div>
                                     </div>
                                 <% total_pembelian += total }) %>
                                 <hr/>
                                 <div class="row">
                                     <div class="col-10 mb-2 text-right"><b>Total Pembelian</b></div>
-                                    <div class="col-2 mb-2"><b>Rp. <%= total_pembelian %></b></div>
+                                    <div class="col-2 mb-2"><b><%= (total_pembelian).toLocaleString("id-ID", {style:"currency", currency:"IDR"}) %></b></div>
                                 </div>
                             </div>
                             <div class="modal-footer">

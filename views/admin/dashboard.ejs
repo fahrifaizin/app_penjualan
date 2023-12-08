@@ -91,6 +91,51 @@
         </a>
     </div>
 
+    <div class="row">
+        <div class="col-xl col-md-6 mb-3">
+            <div class="d-sm-flex align-items-center justify-content-between mb-3 mt-3">
+                <h5 class="mb-0 text-gray-800">Barang Paling Diminati Customer</h5>
+            </div>
+            <table class="table table-responsive table-hover">
+                <thead>
+                    <th style="min-width: 70px;">No.</th>
+                    <th style="min-width: 230px;">Nama Product</th>
+                    <th style="min-width: 150px;">Total Pembelian</th>
+                </thead>
+                <tbody>
+                    <% mostPopularProduct.forEach((data, index) => { index++ %>
+                        <tr>
+                            <td><%= index++ %>.</td>
+                            <td><%= data.nama_product %></td>
+                            <td><%= data.total_product %> pcs</td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xl col-md-6 mb-3">
+            <div class="d-sm-flex align-items-center justify-content-between mb-3 mt-3">
+                <h5 class="mb-0 text-gray-800">Stock Barang Terbanyak</h5>
+            </div>
+            <table class="table table-responsive table-hover">
+                <thead>
+                    <th style="min-width: 70px;">No.</th>
+                    <th style="min-width: 230px;">Nama Product</th>
+                    <th style="min-width: 150px;">Stock Barang</th>
+                </thead>
+                <tbody>
+                    <% mostStock.forEach((data, index) => { index++ %>
+                        <tr>
+                            <td><%= index++ %>.</td>
+                            <td><%= data.nama_product %></td>
+                            <td><%= data.jumlah %> pcs</td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 <!-- /.container-fluid -->
 
